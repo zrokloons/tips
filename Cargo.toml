@@ -1,0 +1,15 @@
+[package]
+name = "tips"
+version = "0.1.0"
+authors = ["Mathias de Paulis Nilsson <mathias.de.paulis.nilsson@ericsson.com>"]
+edition = "2018"
+
+[dependencies]
+serde_yaml = "0.8.8"
+clap = "2.33.0"
+serde = { version = "1.0.90", features = ["derive"] }
+regex = "1.1.6"
+prettytable-rs = "0.8.0"
+lazy_static = "1.3.0"
+uuid = { version = "0.7.4", features = ["serde", "v4"] }
+human-panic = "1.0.1"
