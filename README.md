@@ -3,3 +3,11 @@ Tips is a Rust CLI application that aims to provide an easy interface to retreiv
 and store information from the command line.
 
 [![tips-demo-6.gif](https://i.postimg.cc/4ysR9sFg/tips-demo-6.gif)](https://postimg.cc/ft2P4nN2)
+
+# Installation
+- Clone repo
+- cargo build --release --bin tips --target-dir <path>
+- tips init
+  
+# Configure Tips
+Edit ~/.tipsrc
