@@ -88,6 +88,7 @@ fn update_metadata(tip: &mut crate::tip::Tip, metadata: &String) {
         tip.metadata.subject = tmp_tip.metadata.subject;
         tip.metadata.tags = tmp_tip.metadata.tags;
         tip.metadata.data_extension = tmp_tip.metadata.data_extension;
+        tip.metadata.last_updated = Some(chrono::offset::Local::now());
     }
 }
 

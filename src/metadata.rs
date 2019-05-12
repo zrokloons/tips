@@ -2,6 +2,8 @@
 
 use serde::{Deserialize, Serialize};
 use std::{fmt};
+use chrono::DateTime;
+use chrono::offset::Local;
 
 
 // Metadata struct
@@ -18,6 +20,15 @@ pub struct Metadata {
     // The tags list holds tags for the Tip.
     pub tags: Vec<String>,
 
+    // Date and time when Tip was created. The Option is here since we will
+    // serialaze the struct from file, and we do not expect the user to write
+    // the datetime manually when adding Tip. There is also no reason to let
+    // user fill in the datetime.
+    pub created: Option<DateTime<Local>>,
+
+    // Date and time when Tip was last updated.
+    pub last_updated: Option<DateTime<Local>>,
+
     // This field is used to do syntax highlighting by file extention. Meaning
     // that if the code is Rust use "rs" as extension.
     pub data_extension: Option<String>,
@@ -30,7 +41,10 @@ impl PartialEq for Metadata {
         self.subject == other.subject &&
             self.id == other.id &&
             self.tags == other.tags &&
-            self.data_extension == other.data_extension
+            self.data_extension == other.data_extension &&
+            self.created == other.created &&
+            self.last_updated == other.last_updated
+
     }
 }
 
