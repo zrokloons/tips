@@ -3,29 +3,10 @@
 
 use serde::{Deserialize, Serialize};
 
-
-// Struct that hold Cell style configuration. This allows a user to configure
-// the style of different Cells according to his/her style
-#[derive(Serialize, Deserialize)]
-pub struct CellStyle{
-
-    // Style for the ID column
-    pub id: String,
-
-    // Style for the subject column
-    pub subject: String,
-
-    // Style for the tags column
-    pub tags: String,
-
-    // Style for the data output
-    pub data: String,
-}
-
 // This struct represents the configuration of tips
 //
 // TODO replace String type for the fields below to Path type
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
 
     // db_file field holds the path to the database file.
@@ -43,20 +24,7 @@ pub struct Config {
     pub editor: String,
 
     // Color definitions
-    pub cell_styles: CellStyle,
-}
-
-impl std::fmt::Display for Config {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        writeln!(f, "db_file:            {}", self.db_file)?;
-        writeln!(f, "tmp_file:           {}", self.tmp_file)?;
-        writeln!(f, "editor:             {}", self.editor)?;
-        writeln!(f, "Cell style id:      {}", self.cell_styles.id)?;
-        writeln!(f, "Cell style subject: {}", self.cell_styles.subject)?;
-        writeln!(f, "Cell style tags:    {}", self.cell_styles.tags)?;
-        writeln!(f, "Cell style data:    {}", self.cell_styles.data)?;
-        Ok(())
-    }
+    pub style: Style,
 }
 
 impl Config {
@@ -70,7 +38,7 @@ impl Config {
         let data = match serde_yaml::to_string(&*self) {
             Ok(string) => string,
             Err(err)   => {
-                panic!("Error when serializing Config struc: {}\n{}",
+                panic!("Error when serializing Config struc: {:?}\n{}",
                        self, err);
             },
         };
@@ -107,3 +75,39 @@ impl Config {
         }
     }
 }
+
+
+// Struct describing the style for table output
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TableStyle {
+    // Style for the ID column
+    pub id: String,
+
+    // Style for the subject column
+    pub subject: String,
+
+    // Style for the tags column
+    pub tags: String,
+}
+
+
+// Struct that hold data style configuration
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DataStyle {
+
+    // Set theme for data output
+    pub theme: String,
+}
+
+
+// Struct that hold style configuration for table and data
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Style {
+
+    // Style for prettytable output
+    pub table: TableStyle,
+
+    // Style for the data output
+    pub data: DataStyle,
+}
+

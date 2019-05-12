@@ -13,12 +13,13 @@ pub static TIP: TipTemplate = TipTemplate {
 r##"subject:
 tags:
   - notag
------ TIP BELOW THIS LINE -----
+data_extension:
+----- TIP DATA BELOW THIS LINE -----
 "##,
 
     // The separator is inserted after the template and act as a separator
     // to the tip data. The separator is not included in the stored Tip.
-    separator: "----- TIP BELOW THIS LINE -----",
+    separator: "----- TIP DATA BELOW THIS LINE -----",
 };
 
 // Struct that holds the Tip template and separator fields
@@ -79,7 +80,7 @@ impl Tip {
     fn id_cell(&self) -> prettytable::Cell {
         let mut cell = prettytable::Cell::new(
             &format!("{}", self.metadata.id.unwrap()))
-            .style_spec(&CONFIG.cell_styles.id);
+            .style_spec(&CONFIG.style.table.id);
 
         cell.align(prettytable::format::Alignment::LEFT);
         cell.set_hspan(4);
@@ -91,7 +92,7 @@ impl Tip {
     fn subject_cell(&self) -> prettytable::Cell {
         let mut cell = prettytable::Cell::new(
             &format!("{}", self.metadata.subject))
-            .style_spec(&CONFIG.cell_styles.subject);
+            .style_spec(&CONFIG.style.table.subject);
 
         cell.align(prettytable::format::Alignment::LEFT);
         cell.set_hspan(4);
@@ -113,7 +114,7 @@ impl Tip {
         // Create the cell with the string created
         // and set the style, alignment
         let mut cell = prettytable::Cell::new(&tag_string)
-            .style_spec(&CONFIG.cell_styles.tags);
+            .style_spec(&CONFIG.style.table.tags);
 
         cell.align(prettytable::format::Alignment::RIGHT);
         cell.set_hspan(4);
@@ -166,15 +167,12 @@ impl Tip {
 
         // Read the data contents
         let data_file = format!("{}/{}", &CONFIG.data, &self.data);
-        let content = crate::helpers::read_to_string(&data_file);
+        let data = crate::helpers::read_to_string(&data_file);
 
-        // Create a cell for the data
-        let mut tip = prettytable::Cell::new(&content)
-            .style_spec(&CONFIG.cell_styles.data);
-        tip.align(prettytable::format::Alignment::LEFT);
-        tip.set_hspan(0);
-
-        // Present the tip
-        crate::present::present_tip(self.header_cells(), tip);
+        // Present the
+        crate::present::present_tip(
+            self.header_cells(),
+            &data,
+            self.metadata.data_extension.clone());
     }
 }

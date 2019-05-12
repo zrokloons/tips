@@ -1,10 +1,15 @@
 // This file contains help function to present tips for the user
-// via prettytabke crate.
+// via prettytabke and syntect crates.
 //
 // This file needs refacor and comments!
 
+use crate::statics::{CONFIG};
 use prettytable::format::{LinePosition, LineSeparator, TableFormat};
 use prettytable::{Cell, Row, Table};
+use syntect::easy::HighlightLines;
+use syntect::parsing::SyntaxSet;
+use syntect::highlighting::{ThemeSet, Style};
+use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
 
 
 pub fn present(rows: &Vec<Vec<Cell>>) {
@@ -19,16 +24,36 @@ pub fn present(rows: &Vec<Vec<Cell>>) {
     table.printstd();
 }
 
-pub fn present_tip(head_rows: Vec<Cell>, mut desc_cell: Cell) {
+pub fn present_tip(head_rows: Vec<Cell>, data: &str, data_extension: Option<String>) {
     let tf = tableformat_inter();
     let mut table = Table::new();
+
     table.set_format(tf);
-
     table.add_row(Row::new(head_rows));
-    desc_cell.set_hspan(12);
-    table.add_row(Row::new(vec![desc_cell]));
-
     table.printstd();
+
+    let ps = SyntaxSet::load_defaults_newlines();
+    let ts = ThemeSet::load_defaults();
+
+    // Get the data extention if set, owtherwise default to txt
+    let de = match data_extension {
+        Some(de) => de,
+        None     => String::from("txt"),
+    };
+
+    // Get the syntax given the data extension, if not found default to syntax
+    // for 'txt' extention
+    let syntax = match ps.find_syntax_by_extension(&de) {
+        Some(syntax) => syntax,
+        None         => ps.find_syntax_by_extension("txt").unwrap(),
+    };
+
+    let mut h = HighlightLines::new(syntax, &ts.themes[&CONFIG.style.data.theme]);
+    for line in LinesWithEndings::from(&data) {
+        let ranges: Vec<(Style, &str)> = h.highlight(line, &ps);
+        let escaped = as_24_bit_terminal_escaped(&ranges[..], false);
+        print!("{}", escaped);
+    }
 }
 
 fn tableformat_inter() -> TableFormat {

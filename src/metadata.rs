@@ -17,6 +17,10 @@ pub struct Metadata {
 
     // The tags list holds tags for the Tip.
     pub tags: Vec<String>,
+
+    // This field is used to do syntax highlighting by file extention. Meaning
+    // that if the code is Rust use "rs" as extension.
+    pub data_extension: Option<String>,
 }
 
 // Implement PartialEq trait for Metadata, so we can compare two Metadata
@@ -25,7 +29,8 @@ impl PartialEq for Metadata {
     fn eq(&self, other: &Metadata) -> bool {
         self.subject == other.subject &&
             self.id == other.id &&
-            self.tags == other.tags
+            self.tags == other.tags &&
+            self.data_extension == other.data_extension
     }
 }
 
@@ -37,8 +42,8 @@ impl fmt::Display for Metadata {
         };
         write!(
             f,
-            "subject: {}\nid: {}\ntags: {:?}]\n",
-            self.subject, _id, self.tags,
+            "subject: {}\nid: {}\ntags: {:?}]\ncode_extension: {:?}",
+            self.subject, _id, self.tags, self.data_extension
         )
     }
 }

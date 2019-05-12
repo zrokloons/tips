@@ -92,13 +92,20 @@ fn create_tipsrc() {
         data:        TIPS.get("data").unwrap().to_string(),
         editor:      TIPS.get("editor").unwrap().to_string(),
 
-        // The cell styles are intentionally set to an empty string,
-        // it's up to the user to change this after his/her style
-        cell_styles: crate::config::CellStyle {
-            id: "".to_string(),
-            subject: "".to_string(),
-            tags: "".to_string(),
-            data: "".to_string(),
+        style: crate::config::Style {
+
+            // The cell styles are intentionally set to an empty string,
+            // it's up to the user to change this after his/her style
+            table: crate::config::TableStyle {
+                id: "".to_string(),
+                subject: "".to_string(),
+                tags: "".to_string(),
+            },
+
+            // Let's expect that everyone runs Solarized dark theme... I do
+            data: crate::config::DataStyle {
+                theme: "Solarized (dark)".to_string(),
+            },
         },
     };
 
@@ -120,6 +127,7 @@ fn create_database() {
                     subject: "My first tip".to_string(),
                     id: Some(1),
                     tags: vec!["tip".to_string()],
+                    data_extension: Some(String::from("txt")),
                 },
                 data: uuid,
             }
@@ -137,6 +145,10 @@ Welcome to T(ips)
 
     Colored output
     --------------
+
+    Below applies for Tip summary output, that means when listing Tips and also
+    the header when showing the data contents of a tip.
+
 	Prettytable supports setting a style on a Cell. Tips configuration ~/.tipsrc
     contain an empty style. By changing that string you can get the style you
     prefer.
