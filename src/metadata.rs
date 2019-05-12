@@ -18,7 +18,7 @@ pub struct Metadata {
     pub id: Option<usize>,
 
     // The tags list holds tags for the Tip.
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
 
     // Date and time when Tip was created. The Option is here since we will
     // serialaze the struct from file, and we do not expect the user to write

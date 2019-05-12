@@ -141,7 +141,6 @@ fn create(contents: String) -> crate::tip::Tip {
     __data.replace_range(..TIP.separator.len(), "");
     __data.remove(0); // remove newline left from above
 
-
     // First deserialize the Metadata from String, then add the datetime to the
     // created field in Metadata.
     let mut md: crate::metadata::Metadata = match serde_yaml::from_str(&_metadata) {
