@@ -31,10 +31,12 @@ pub fn update(matches: &clap::ArgMatches) {
     // Separate metadata and data
     let container = extrace_metadata_data(&contents);
 
-    // Update data and metadata & then store tips
-    update_data(&tip, &container.data);
-    update_metadata(&mut tip, &container.metadata);
-    tips.store();
+    // Update data and metadata & then store tips if something was updated.
+    if  update_data(&tip, &container.data) ||
+        update_metadata(&mut tip, &container.metadata) {
+            tip.metadata.last_updated = Some(chrono::offset::Local::now());
+            tips.store();
+    }
 }
 
 // Get Tip given ID
@@ -58,7 +60,7 @@ fn get_tip_with_id<'a>(id: &usize,
 }
 
 // Write Tip data to file if it differ
-fn update_data(tip: &crate::tip::Tip, data: &String) {
+fn update_data(tip: &crate::tip::Tip, data: &String) -> bool {
 
     // Compare data in updated Tip with data stored and only if it differ
     // write the new data to file, replacing old data.
@@ -66,12 +68,15 @@ fn update_data(tip: &crate::tip::Tip, data: &String) {
         crate::helpers::write_to_file(
             &format!("{}/{}", &CONFIG.data, &tip.data),
             &data);
+        true
+    } else {
+        false
     }
 }
 
 // Update the Tip's metadata if it differ. This is done by creating a temporary
 // Tip using the metadata received and comparing it against original Tip
-fn update_metadata(tip: &mut crate::tip::Tip, metadata: &String) {
+fn update_metadata(tip: &mut crate::tip::Tip, metadata: &String) -> bool {
 
     // Create a temporary Tip struct from updated metadata
     let tmp_tip: crate::tip::Tip = match serde_yaml::from_str(metadata) {
@@ -88,9 +93,12 @@ fn update_metadata(tip: &mut crate::tip::Tip, metadata: &String) {
         tip.metadata.subject = tmp_tip.metadata.subject;
         tip.metadata.tags = tmp_tip.metadata.tags;
         tip.metadata.data_extension = tmp_tip.metadata.data_extension;
-        tip.metadata.last_updated = Some(chrono::offset::Local::now());
+        true
+    } else {
+        false
     }
 }
+
 
 // Structure to to hold metadata and data from updated file
 struct MetadataAndData {

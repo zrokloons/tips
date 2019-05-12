@@ -5,30 +5,6 @@ use serde::{Deserialize, Serialize};
 use std::{fmt, fs};
 
 
-pub static TIP: TipTemplate = TipTemplate {
-
-    // The template is used when a new is added. It's inserted into the
-    // temporary file that is opened.
-    template:
-r##"subject:
-tags:
-  - notag
-data_extension:
------ TIP DATA BELOW THIS LINE -----
-"##,
-
-    // The separator is inserted after the template and act as a separator
-    // to the tip data. The separator is not included in the stored Tip.
-    separator: "----- TIP DATA BELOW THIS LINE -----",
-};
-
-// Struct that holds the Tip template and separator fields
-pub struct TipTemplate{
-    pub template: &'static str,
-    pub separator: &'static str,
-}
-
-
 // Structure that describes the Tip, including both metadata and
 // tip data.
 //
@@ -106,10 +82,13 @@ impl Tip {
         // Create a new String containing all tags separated
         // by a space
         let mut tag_string = String::new();
-        for tag in self.metadata.tags.iter() {
-            tag_string.insert(0, ' ');
-            tag_string.insert_str(0, &tag);
-        }
+
+        if let Some(tags) = &self.metadata.tags {
+            for tag in tags.iter() {
+                tag_string.insert(0, ' ');
+                tag_string.insert_str(0, &tag);
+            }
+        };
 
         // Create the cell with the string created
         // and set the style, alignment
@@ -142,7 +121,7 @@ impl Tip {
         };
 
         // Separator string
-        let separator = format!("\n{}\n", &TIP.separator);
+        let separator = format!("\n\n{}\n", &TIP.separator);
 
         // Tip data
         let data_file = format!("{}/{}", &CONFIG.data, self.data);
@@ -175,4 +154,28 @@ impl Tip {
             &data,
             self.metadata.data_extension.clone());
     }
+}
+
+
+pub static TIP: TipTemplate = TipTemplate {
+
+    // The template is used when a new is added. It's inserted into the
+    // temporary file that is opened.
+    template:
+r##"subject:
+tags: []
+data_extension:
+
+----- TIP DATA BELOW THIS LINE -----
+"##,
+
+    // The separator is inserted after the template and act as a separator
+    // to the tip data. The separator is not included in the stored Tip.
+    separator: "----- TIP DATA BELOW THIS LINE -----",
+};
+
+// Struct that holds the Tip template and separator fields
+pub struct TipTemplate{
+    pub template: &'static str,
+    pub separator: &'static str,
 }
