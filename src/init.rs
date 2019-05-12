@@ -127,6 +127,8 @@ fn create_database() {
                     subject: "My first tip".to_string(),
                     id: Some(1),
                     tags: vec!["tip".to_string()],
+                    created: None,
+                    last_updated: None,
                     data_extension: Some(String::from("txt")),
                 },
                 data: uuid,

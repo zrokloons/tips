@@ -141,13 +141,18 @@ fn create(contents: String) -> crate::tip::Tip {
     __data.replace_range(..TIP.separator.len(), "");
     __data.remove(0); // remove newline left from above
 
-    let md: crate::metadata::Metadata = match serde_yaml::from_str(&_metadata) {
-        Ok(m) => m,
+
+    // First deserialize the Metadata from String, then add the datetime to the
+    // created field in Metadata.
+    let mut md: crate::metadata::Metadata = match serde_yaml::from_str(&_metadata) {
+        Ok(md) => md,
         Err(err) => {
             panic!("Error deserialize metadata {}\n{}",
                    &_metadata, err)
         },
     };
+
+    md.created = Some(chrono::offset::Local::now());
 
     // Generate a new uudi for this Tip's data.
     let uuid = uuid::Uuid::new_v4();
