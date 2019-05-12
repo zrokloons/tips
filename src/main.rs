@@ -133,6 +133,10 @@ fn main() {
         Some("update") => update(matches.subcommand_matches("update").unwrap()),
         Some("show")   => show(matches.subcommand_matches("show").unwrap()),
         Some("list")   => list(matches.subcommand_matches("list").unwrap()),
+        None           => {
+            println!("Woops! No subcommand given");
+            std::process::exit(1);
+        },
         not_supported => {
             println!("'{}' not yet implemented!", not_supported.unwrap());
             std::process::exit(1);
