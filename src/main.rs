@@ -10,6 +10,7 @@ extern crate serde;
 extern crate serde_yaml;
 extern crate regex;
 extern crate chrono;
+extern crate atty;
 mod helpers;
 mod init;
 mod query;

@@ -28,31 +28,48 @@ pub fn present_tip(head_rows: Vec<Cell>, data: &str, data_extension: Option<Stri
     let tf = tableformat_inter();
     let mut table = Table::new();
 
-    table.set_format(tf);
-    table.add_row(Row::new(head_rows));
-    table.printstd();
-
-    let ps = SyntaxSet::load_defaults_newlines();
-    let ts = ThemeSet::load_defaults();
-
-    // Get the data extention if set, owtherwise default to txt
-    let de = match data_extension {
-        Some(de) => de,
-        None     => String::from("txt"),
+    // Print the Tip header unless env variable is set.
+    match std::env::var("TIPS_SHOW_NOHEADER") {
+        Ok(_) => (),
+        Err(_) => {
+            table.set_format(tf);
+            table.add_row(Row::new(head_rows));
+            table.printstd();
+        },
     };
 
-    // Get the syntax given the data extension, if not found default to syntax
-    // for 'txt' extention
-    let syntax = match ps.find_syntax_by_extension(&de) {
-        Some(syntax) => syntax,
-        None         => ps.find_syntax_by_extension("txt").unwrap(),
-    };
+    // Test if stdout is a tty. If it's not an tty we shall print the raw
+    // string to stdout, since a formatted string via syntect adds extra
+    // characters that is most probably not wanted when stdout is not a tty.
+  	if atty::is(atty::Stream::Stdout) {
 
-    let mut h = HighlightLines::new(syntax, &ts.themes[&CONFIG.style.data.theme]);
-    for line in LinesWithEndings::from(&data) {
-        let ranges: Vec<(Style, &str)> = h.highlight(line, &ps);
-        let escaped = as_24_bit_terminal_escaped(&ranges[..], false);
-        print!("{}", escaped);
+        let ps = SyntaxSet::load_defaults_newlines();
+        let ts = ThemeSet::load_defaults();
+
+        // Get the data extention if set, owtherwise default to txt
+        let de = match data_extension {
+            Some(de) => de,
+            None     => String::from("txt"),
+        };
+
+        // Get the syntax given the data extension, if not found default to syntax
+        // for 'txt' extention
+        let syntax = match ps.find_syntax_by_extension(&de) {
+            Some(syntax) => syntax,
+            None         => ps.find_syntax_by_extension("txt").unwrap(),
+        };
+
+        let mut h = HighlightLines::new(syntax, &ts.themes[&CONFIG.style.data.theme]);
+        for line in LinesWithEndings::from(&data) {
+            let ranges: Vec<(Style, &str)> = h.highlight(line, &ps);
+            let escaped = as_24_bit_terminal_escaped(&ranges[..], false);
+            print!("{}", escaped);
+        }
+
+    } else {
+
+        // Just print the raw string, stdout is not a tty!
+        println!("{}", data);
     }
 }
 
