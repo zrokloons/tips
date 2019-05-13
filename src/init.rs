@@ -10,9 +10,9 @@ lazy_static::lazy_static! {
         let mut tips = collections::HashMap::new();
         tips.insert("tipsrc", format!("{}/.tipsrc", env::var("HOME").unwrap()));
         tips.insert("tips", format!("{}/.tips", env::var("HOME").unwrap()));
-        tips.insert("data", format!("{}/data", tips.get("tips").unwrap()));
-        tips.insert("db_file", format!("{}/db.yaml", tips.get("tips").unwrap()));
-        tips.insert("tmp_file", format!("{}/tmp_file.yaml", tips.get("tips").unwrap()));
+        tips.insert("data", format!("{}/data", &tips["tips"]));
+        tips.insert("db_file", format!("{}/db.yaml", &tips["tips"]));
+        tips.insert("tmp_file", format!("{}/tmp_file.yaml", &tips["tips"]));
         tips.insert("editor", "/usr/bin/vim".to_string());
         tips
     };
@@ -22,9 +22,10 @@ lazy_static::lazy_static! {
 // files and paths will be created. If it is found a validation of config
 // and file structure will be performed.
 pub fn init() {
-    match path::Path::new(&TIPS.get("tipsrc").unwrap()).exists() {
-        true  => verify_existing(),
-        false => create(),
+    if path::Path::new(&TIPS.get("tipsrc").unwrap()).exists() {
+        verify_existing()
+    } else {
+        create()
     };
 }
 

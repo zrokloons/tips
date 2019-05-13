@@ -12,7 +12,7 @@ use syntect::highlighting::{ThemeSet, Style};
 use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
 
 
-pub fn present(rows: &Vec<Vec<Cell>>) {
+pub fn present(rows: &[Vec<Cell>]) {
     let tf = tableformat();
     let mut table = Table::new();
     table.set_format(tf);

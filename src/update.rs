@@ -18,7 +18,7 @@ pub fn update(matches: &clap::ArgMatches) {
 
     // Possible metadata updates require mutable tips and tip initializing
     let mut tips = crate::tips::Tips::load();
-    let mut tip = get_tip_with_id(&id, &mut tips);
+    let mut tip = get_tip_with_id(id, &mut tips);
 
     // Write tip to file then open it with configured editor
     tip.to_file(&CONFIG.tmp_file);
@@ -40,11 +40,11 @@ pub fn update(matches: &clap::ArgMatches) {
 }
 
 // Get Tip given ID
-fn get_tip_with_id<'a>(id: &usize,
-               tips: &'a mut crate::tips::Tips) -> &'a mut crate::tip::Tip {
+fn get_tip_with_id(id: usize,
+               tips: &mut crate::tips::Tips) -> &mut crate::tip::Tip {
 
     // Locate index of Tip given ID or panic since no Tip with ID was found
-    if let Some(index) = tips.get_tip_index(&id) {
+    if let Some(index) = tips.get_tip_index(id) {
 
         // Return mut Tip reference or panic.
         return match tips.tips.get_mut(index) {
@@ -60,11 +60,11 @@ fn get_tip_with_id<'a>(id: &usize,
 }
 
 // Write Tip data to file if it differ
-fn update_data(tip: &crate::tip::Tip, data: &String) -> bool {
+fn update_data(tip: &crate::tip::Tip, data: &str) -> bool {
 
     // Compare data in updated Tip with data stored and only if it differ
     // write the new data to file, replacing old data.
-    if data != &tip.get_data() {
+    if data != tip.get_data() {
         crate::helpers::write_to_file(
             &format!("{}/{}", &CONFIG.data, &tip.data),
             &data);
@@ -76,7 +76,7 @@ fn update_data(tip: &crate::tip::Tip, data: &String) -> bool {
 
 // Update the Tip's metadata if it differ. This is done by creating a temporary
 // Tip using the metadata received and comparing it against original Tip
-fn update_metadata(tip: &mut crate::tip::Tip, metadata: &String) -> bool {
+fn update_metadata(tip: &mut crate::tip::Tip, metadata: &str) -> bool {
 
     // Create a temporary Tip struct from updated metadata
     let tmp_tip: crate::tip::Tip = match serde_yaml::from_str(metadata) {
@@ -108,7 +108,7 @@ struct MetadataAndData {
 
 // Extract the metadata and data by splitting the contents by the separator,
 // then initialize a MetadataAndData struct that is returned.
-fn extrace_metadata_data(contents: &String) -> MetadataAndData {
+fn extrace_metadata_data(contents: &str) -> MetadataAndData {
     let byte_index = match contents.find(TIP.separator) {
         Some(bi) => bi,
         None     => panic!("Unable to find split pattern!"),
@@ -125,6 +125,6 @@ fn extrace_metadata_data(contents: &String) -> MetadataAndData {
 
     MetadataAndData {
         metadata: metadata.to_string(),
-        data: data,
+        data,
     }
 }

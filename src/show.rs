@@ -22,8 +22,8 @@ pub fn show(matches: &clap::ArgMatches) {
     let tips = crate::tips::Tips::load();
 
     // If we get an index for the tip present it. Otherwise panic.
-    if let Some(index) = tips.get_tip_index(&id) {
-        let tip = tips.tips.get(index).unwrap();
+    if let Some(index) = tips.get_tip_index(id) {
+        let tip = &tips.tips[index];
         tip.present();
     } else {
         panic!("No tip in DB for ID: {}", id)
