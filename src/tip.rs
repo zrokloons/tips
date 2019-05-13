@@ -67,7 +67,7 @@ impl Tip {
     // Cell for metadata.subject
     fn subject_cell(&self) -> prettytable::Cell {
         let mut cell = prettytable::Cell::new(
-            &format!("{}", self.metadata.subject))
+            &self.metadata.subject.to_string())
             .style_spec(&CONFIG.style.table.subject);
 
         cell.align(prettytable::format::Alignment::LEFT);

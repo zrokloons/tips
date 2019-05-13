@@ -1,9 +1,6 @@
 // This file contains functionality to search pattern in a Tip
 
 
-// Enum defining all Tip components, special case to the all
-// component which means Subject and Data and Tag (surprise :)
-//
 // Enum defining the components of a Tip
 pub enum Component {
 

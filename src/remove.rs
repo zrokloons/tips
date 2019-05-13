@@ -27,10 +27,7 @@ pub fn remove(matches: &clap::ArgMatches) {
         crate::helpers::remove_file(&remove_tip.data);
         tips.tips.remove(remove_tip.index);
         tips.store();
-    }
-
-    // else exit with a message
-    else {
+    } else { // else exit with a message
         println!("No tip with id: {} found", id);
         std::process::exit(1);
     }

@@ -32,7 +32,7 @@ impl Config {
     // Functions
 
     // This function takes the Config struct and write it to specified file
-    pub fn store(&self, file_path: &String) {
+    pub fn store(&self, file_path: &str) {
 
         // Serialize the Config struct
         let data = match serde_yaml::to_string(&*self) {

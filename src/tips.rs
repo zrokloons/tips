@@ -42,9 +42,9 @@ impl Tips {
     }
 
     // Return the index of tip matching given ID
-    pub fn get_tip_index(&self, id: &usize) -> Option<usize> {
+    pub fn get_tip_index(&self, id: usize) -> Option<usize> {
         for (index, tip) in self.tips.iter().enumerate() {
-            if &tip.metadata.id.unwrap() == id {
+            if tip.metadata.id.unwrap() == id {
                 return Some(index)
             }
         }

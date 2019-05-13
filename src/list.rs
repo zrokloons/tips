@@ -34,9 +34,8 @@ fn match_pattern(pattern: &str, part: Option<&str>) {
     // Iterate over all tips and populate the rows vector with tip headlines
     // for any Tip that matches the pattern.
     for tip in tips.tips.iter() {
-        match crate::query::search(pattern, &tip, &component) {
-            Some(tip) => rows.push(tip.header_cells()),
-            None      => (),
+        if let Some(tip) = crate::query::search(pattern, &tip, &component) {
+            rows.push(tip.header_cells())
         }
     };
 
