@@ -4,14 +4,12 @@
 // Entry point for list subcommand
 pub fn list(matches: &clap::ArgMatches) {
 
-    // By default the "pattern" value is set to "all". Meaning if only "list"
-    // is given all tips will be presented. however if user provide a pattern
-    // the "pattern" will contain this and we need to match agains it.
-    match matches.value_of("pattern") {
-        Some("all")   => crate::tips::Tips::summary(),
-        Some(pattern) => match_pattern(pattern, matches.value_of("part")),
-        None          => panic!("default pattern not set for 'pattern' ?"),
-    };
+    // List all tips or if pattern vas given list those matching
+    if let Some(pattern) = matches.value_of("pattern") {
+         match_pattern(pattern, matches.value_of("source"));
+    } else {
+        crate::tips::Tips::summary();
+    }
 }
 
 // Search for pattern among all tips. Unless specified all components are
@@ -24,10 +22,10 @@ fn match_pattern(pattern: &str, part: Option<&str>) {
 
     // Set component according to "part" arg
     let component = match part {
+        Some("*")       => crate::query::Component::All,
         Some("subject") => crate::query::Component::Subject,
         Some("tag")     => crate::query::Component::Tag,
         Some("data")    => crate::query::Component::Data,
-        Some("all")     => crate::query::Component::All,
         _               => panic!("Part not implemented!"),
     };
 

@@ -48,6 +48,8 @@ fn main() {
                 .arg(
                     Arg::with_name("file")
                         .help("Insert contents of file")
+                        .short("f")
+                        .long("file")
                         .takes_value(true),
                 )
         )
@@ -58,14 +60,19 @@ fn main() {
                 .about("List tips")
                 .arg(
                     Arg::with_name("pattern")
-                        .help("List tips matching pattern in tag sections")
-                        .default_value("all")
+                        .help("List the Tip(s) matching pattern")
+                        .short("p")
+                        .long("pattern")
+                        .takes_value(true)
                 )
                 .arg(
-                    Arg::with_name("part")
-                        .help("Part to apply pattern on")
-                        .default_value("all")
-                        .possible_values(&["subject", "tag", "data", "all"]),
+                    Arg::with_name("source")
+                        .help("Source in the tip to run pattern matching on")
+                        .short("s")
+                        .long("source")
+                        .requires("pattern")
+                        .default_value_if("pattern", None, "*")
+                        .possible_values(&["subject", "tag", "data", "date", "*"]),
                 )
         )
         .subcommand(
